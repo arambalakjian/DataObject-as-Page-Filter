@@ -1,9 +1,9 @@
 {
-	"name": "arambalakjian/dataobjectaspage",
-	"replace": {"silverstripe/dataobjectaspage": "*"},
-	"description": "Manage DataObjects through model admin but display them as pages on the site",
+	"name": "arambalakjian/dataobjectaspagefilter",
+	"replace": {"silverstripe/dataobjectaspagefilter": "*"},
+	"description": "Filter DataObjects created with the DataObjectAsPage module - Allows for multi select and match all filters",
 	"type": "silverstripe-module",
-	"keywords": ["silverstripe", "dataobjectasapage"],
+	"keywords": ["silverstripe", "dataobjectasapagefilter", "filter"],
 	"authors": [
 	{
 		"name": "Aram Balakjian",
