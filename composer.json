@@ -1,0 +1,19 @@
+{
+	"name": "arambalakjian/dataobjectaspage",
+	"replace": {"silverstripe/dataobjectaspage": "*"},
+	"description": "Manage DataObjects through model admin but display them as pages on the site",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "dataobjectasapage"],
+	"authors": [
+	{
+		"name": "Aram Balakjian",
+		"email": "aram@carboncrayon.com"
+	}
+	],
+	"require":
+	{
+		"silverstripe/framework": "3.1.*",
+		"silverstripe/cms": "3.1.*",
+		"arambalakjian/dataobjectaspage": "3.1"
+	}
+}
