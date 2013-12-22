@@ -54,10 +54,11 @@ class FilteredProductListingPage_Controller extends FilteredListingPage_Controll
 	
 	private static $filter_settings = array(
 		'Categories' => array(
-			'Title' => 'Choose Category',	//Define the Title of the Filter (Defailts to Fieldname)
-			'Preposition' => 'in', 			//Define the preposition in the filter message, e.g. Products IN x or y category (Defaults to "in")
-			'MultiSelect' => false, 		//Select Multiple options at once (default is true)
-			'MatchAll' => false  			//Match all the multi selected items, i.e. select a Product which has category x AND y. Requires a Many_Many or Has_Many
+			'Title' => 'Choose Category',	//Required - Define the Title of the Filter
+			'ClassName' => 'CategoryClass'//Required - The Class of the category you are filtering by (the one that extends DataObjectAsPageCategory)
+			'Preposition' => 'in', 			//Optional - Define the preposition in the filter message, e.g. Products IN x or y category (Defaults to "in")
+			'MultiSelect' => false, 		//Optional - Select Multiple options at once (default is true)
+			'MatchAll' => false  			//Optional - Match all the multi selected items, i.e. select a Product which has category x AND y. Requires a Many_Many or Has_Many
 		)
 	);
 }
@@ -68,16 +69,17 @@ Your DataObjectAsPage class:
 
 **Product.php**
 ```php
-<?php
 
 class Product extends DataObjectAsPage 
 {
     //The class of the page which will list this DataObject
-    static $listing_class = 'ProductListingPage';
+    private static $listing_class = 'ProductListingPage';
+    
     //Class Naming (optional but reccomended)
-    static $plural_name = 'Products';
-    static $singular_name = 'Product';
+    private static $plural_name = 'Products';
+    private static $singular_name = 'Product';
 	
+	//Category Relation
 	static $many_many = array(
 		'Categories' => 'ProductCategory'
 	);	
@@ -93,12 +95,19 @@ Your Category class (add as many as you like):
 
 class ProductCategory extends DataObjectAsPageCategory 
 {
+    //Listing Page Class
 	private static $listing_page_class = 'FilteredProductListingPage';
+	
+	//Class Naming (optional but reccomended)
 	private static $singular_name = 'Category';
 	private static $plural_name = 'Categories';
-	
+
+    //Category Relation
 	private static $belongs_many_many = array(
 		'Product' => 'Product' 	
 	);
 }
 ```
+
+# Tempalting
+There is no styling on any of the filters by default. Have a look in the templates folder for examples of how to structure the markup and then just override these templates in your theme folder.
