@@ -65,17 +65,7 @@ JS
 			
 			foreach($filterSettings as $varName => $settings)
 			{
-				//Check if we are actually passed any settings, otherwise reset the VarName to the Value of the Array
-				if(!is_array($settings))
-				{
-					$varName = $settings;
-				}
-				
 				//Set options
-				
-				//Define the Title of the Filter (Defailts to Fieldname)
-				$title = (is_array($settings) && isset($settings['Title'])) ? $settings['Title'] : $varName;
-				
 				//Select Multiple options at once (default is true)
 				$multiselect = (is_array($settings) && isset($settings['MultiSelect'])) ? $settings['MultiSelect'] : true;
 				
@@ -84,10 +74,12 @@ JS
 				
 				//Define the preposition in the filter message, e.g. Products IN x or y category (Defaults to "in")
 				$preposition = (is_array($settings) && isset($settings['Preposition'])) ? $settings['Preposition'] : 'in';
+
 				
 				//Define the filter
 				$filters[$varName] = array(
-					'Title' => $title,
+					'Title' => $settings['Title'],
+					'ClassName' => $settings['ClassName'],
 					'MultiSelect' => $multiselect,
 					'MatchAll' => $matchAll,
 					'Preposition' => $preposition
@@ -103,29 +95,29 @@ JS
 	 */
 	function getFilters()
 	{
-		if($FilterSettings = $this->getFilterSettings())
+		if($filterSettings = $this->getFilterSettings())
 		{
-			$Filters = new ArrayList();
+			$filters = new ArrayList();
 			
-			foreach($FilterSettings as $VarName => $Settings)
-			{				
-				$dataClass = Singleton($this->Stat('item_class'))->$VarName()->dataClass();
-				
+			foreach($filterSettings as $varName => $settings)
+			{
+				$dataClass = $settings['ClassName'];
+
 				//Categories
-				if($Options = $dataClass::get())
+				if($options = $dataClass::get())
 				{
-					$Filters->push(
+					$filters->push(
 						$this->getFilterOptionSet(
-							$Settings['Title'], 
-							$VarName, 
-							$Options,  
-							$Settings['MultiSelect']
+							$settings['Title'], 
+							$varName, 
+							$options,  
+							$settings['MultiSelect']
 						)
 					);
 				}			
 			}
 
-			return $Filters;		
+			return $filters;		
 		}
 	}
 
@@ -144,7 +136,20 @@ JS
 			{
 				if($values = $this->getFilterValue($varName))
 				{
-					$filterTitle = $varName . ".ID";
+					$filterTitle = $varName;
+					
+					$relation = Singleton($this->stat('item_class'))->$varName();
+					
+					//If we are a has_many or Many_many we need the . notation "FieldName.ID"
+					if(get_class($relation) == "UnsavedRelationList")
+					{
+						$filterTitle .= ".ID";
+					}
+					//Otherwise it's a has one so the Column is "FieldNameID"
+					else
+					{
+						$filterTitle .= "ID";
+					}
 					
 					if($settings['MatchAll'])
 					{
@@ -394,7 +399,7 @@ JS
 			{
 				if($this->getFilterValue($varName))
 				{			
-					$OutputMessages[] = $this->getIndividualFilterMessage($varName, $settings['Preposition'], Singleton($this->Stat('item_class'))->$varName()->dataClass(), $settings['MatchAll']);	
+					$OutputMessages[] = $this->getIndividualFilterMessage($varName, $settings['Preposition'], $settings['ClassName'], $settings['MatchAll']);	
 				}
 			}
 			
