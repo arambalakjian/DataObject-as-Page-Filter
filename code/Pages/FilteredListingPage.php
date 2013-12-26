@@ -15,36 +15,41 @@ class FilteredListingPage_Controller extends DataObjectAsPageHolder_Controller {
 		
 		if($this->stat('ajax_filter'))
 		{
-			//Ajax for the filter
-			Requirements::customScript(<<<JS
-	
-				jQuery(document).ready(function(){
-						
-					//Container for inserting template
-					Container = jQuery('.main > .inner');
-						
-					jQuery('.filter a').on('click', function(ev){
-						
-						ev.preventDefault();
-						
-						href = jQuery(this).attr('href');
-						
-						jQuery.ajax({
-							  url: href,
-							  beforeSend: function(){
-							  	Container.addClass('loading');
-							  },
-							  success: function(data) {
-							    Container.html(data).removeClass('loading');
-							  }
-						});
-						
-						return false;
-					});
-				});
-JS
-			);			
+			$this->getAJAXJS();
 		}
+	}
+
+	public function getAJAXJS()
+	{
+		//Ajax for the filter
+		Requirements::customScript(<<<JS
+	
+			jQuery(document).ready(function(){
+					
+				//Container for inserting template
+				Container = jQuery('.main > .inner');
+					
+				jQuery('.filter a').on('click', function(ev){
+					
+					ev.preventDefault();
+					
+					href = jQuery(this).attr('href');
+					
+					jQuery.ajax({
+						  url: href,
+						  beforeSend: function(){
+						  	Container.addClass('loading');
+						  },
+						  success: function(data) {
+						    Container.html(data).removeClass('loading');
+						  }
+					});
+					
+					return false;
+				});
+			});
+JS
+		);		
 	}
 
 	public function index()
@@ -234,7 +239,7 @@ JS
 				{
 					$CurrentValuesArray = explode(',',$CurrentValues);
 					//Remove the value from the array
-					$NewValuesArray = array_values(array_diff($CurrentValuesArray,array($Value)));					
+					$NewValuesArray = array_values(array_diff($CurrentValuesArray,array($Value)));
 				}
 				//If unselected we need to add the item to the existing values
 				else
@@ -274,7 +279,8 @@ JS
 		$Filter = new ArrayData(array(
 			'Title' => $FilterTitle,
 			'Options' => $Options,
-			'ResetLink' => ($this->getFilterValue($VarName)) ? $this->Link() . $this->getCurrentFilterString(array($VarName)) : false
+			'ResetLink' => ($this->getFilterValue($VarName)) ? $this->Link() . $this->getCurrentFilterString(array($VarName)) : false,
+			'CurrentlyFiltered' => $this->getFilterValue($VarName) ? true : false
 		));
 		
 		return $Filter;	
