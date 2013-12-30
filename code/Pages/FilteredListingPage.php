@@ -310,10 +310,24 @@ JS
 	{
 		if(!is_array($Exclude))
 			$Exclude = array($Exclude);
+		
+		//Define the vars that are part of the filter
+		$include = array();
+		
+		if($filterSettings = $this->getFilterSettings())
+		{
+			foreach($filterSettings as $varname => $settings)
+			{
+				if(!in_array($varname,$Exclude))
+				{
+					$include[] = $varname;
+				}
+			}
+		}
 
-		//add start to the exclude array to fix pagination issues
-		if($ExcludePagination == TRUE && !in_array('start', $Exclude))
-			array_push($Exclude, 'start');
+		//add start to the include array if we are not excluding it
+		if(!$ExcludePagination)
+			$include[] = 'start';
 			
 		if(is_object($this->request))
 		{
@@ -327,7 +341,7 @@ JS
 			{
 				foreach($Values as $Key => $Value)
 				{
-					if(!$Exclude || !in_array($Key, $Exclude))
+					if(in_array($Key, $include))
 					{					
 						$String .= $Symbol . $Key . '=' . urlencode($Value);
 						$Symbol = "&";
@@ -337,7 +351,7 @@ JS
 			
 			return $String;
 		}
-	}	
+	}
 
 	/*
 	 * Generates the filter message for one value, which can then be passed into the filter builder to put the whole message together
@@ -431,7 +445,7 @@ JS
 				if($ItemCount > 0)
 				{
 					$ItemName = ($ItemCount == 1) ? $SinglularName : $PluralName;
-					$Class = 'results';
+					$Class = 'info';
 	
 					//Initial String
 					$CompleteMessage = '<span class="count">' . $ItemCount . ' ' . $ItemName . ':</span> You are viewing ' . $PluralName; 
@@ -440,7 +454,7 @@ JS
 				else
 				{
 					$ItemName = $PluralName;
-					$Class = 'bad';
+					$Class = 'danger';
 					
 					//Initial String
 					$CompleteMessage = 'There were no ' . $PluralName . ' found ';
@@ -452,7 +466,7 @@ JS
 			else
 			{
 				$CompleteMessage = 'You are viewing all <span class="count">' . $ItemCount . ' ' . $PluralName . '</span>'; 
-				$Class = 'results';
+				$Class = 'info';
 			}
 			
 			//Place into an array ready to return to the template
@@ -470,9 +484,9 @@ JS
 	 */
 	function getBackLink()
 	{
-		if($String = $this->getCurrentFilterString(Null, '?', false))
+		if($string = $this->getCurrentFilterString(null, '?'))
 		{
-			return '?backlink=' . base64_encode($String);
+			return '?backlink=' . base64_encode($string);
 		}
 	}
 	
