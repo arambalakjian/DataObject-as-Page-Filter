@@ -55,7 +55,7 @@ class FilteredProductListingPage_Controller extends FilteredListingPage_Controll
 	private static $filter_settings = array(
 		'Categories' => array(
 			'Title' => 'Choose Category',	//Required - Define the Title of the Filter
-			'ClassName' => 'CategoryClass'//Required - The Class of the category you are filtering by (the one that extends DataObjectAsPageCategory)
+			'ClassName' => 'CategoryClass',//Required - The Class of the category you are filtering by (the one that extends DataObjectAsPageCategory)
 			'Preposition' => 'in', 			//Optional - Define the preposition in the filter message, e.g. Products IN x or y category (Defaults to "in")
 			'MultiSelect' => false, 		//Optional - Select Multiple options at once (default is true)
 			'MatchAll' => false  			//Optional - Match all the multi selected items, i.e. select a Product which has category x AND y. Requires a Many_Many or Has_Many
