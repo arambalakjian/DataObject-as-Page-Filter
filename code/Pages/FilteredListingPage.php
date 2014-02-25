@@ -165,7 +165,8 @@ JS
 				}
 			}
 
-			return $filter;
+			//Set the type of filter and return
+			return $filter ? array('filter' => $filter) : false;
 		}
 	}
 
